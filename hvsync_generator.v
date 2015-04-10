@@ -1,0 +1,1 @@
+module hvsync generator(clk, reset, vga_h_sync, vga_v_sync, inDisplayArea, CounterX, CounterY);
