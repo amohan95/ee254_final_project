@@ -1,3 +1,5 @@
-work/
-*.mti
-*.mpf
+*
+
+!.gitignore
+!*.v
+!*.bit
