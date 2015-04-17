@@ -10,9 +10,9 @@
 // 0                                 490    491  525 (lines)
 // -----------------------------------|______|-------
 
+module hvsync_generator(clk, reset,vga_h_sync, vga_v_sync, inDisplayArea, CounterX, CounterY);
 `include "constants.vh"
 
-module hvsync_generator(clk, reset,vga_h_sync, vga_v_sync, inDisplayArea, CounterX, CounterY);
 input clk;
 input reset;
 output vga_h_sync, vga_v_sync;
@@ -57,7 +57,7 @@ always @(posedge clk)
    if(reset)
       inDisplayArea <= 0;
    else
-	   inDisplayArea <= (CounterX < 640) && (CounterY < 480);
+	   inDisplayArea <= (CounterX <= X_MAX) && (CounterY <= Y_MAX);
 	
 assign vga_h_sync = ~vga_HS;
 assign vga_v_sync = ~vga_VS;

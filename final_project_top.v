@@ -1,19 +1,20 @@
-`include "constants.vh"
 `timescale 1ns / 1ps
 //////////////////////////////////////////////////////////////////////////////////
 // VGA verilog template
 // Author:  Da Cheng
 //////////////////////////////////////////////////////////////////////////////////
-module vga_demo(ClkPort, vga_h_sync, vga_v_sync, vga_r, vga_g, vga_b, Sw0, Sw1, btnU, btnD,
+module final_project_top(ClkPort, vga_h_sync, vga_v_sync, vga_r, vga_g, vga_b, Sw0, Sw1, btnU, btnD,
 	St_ce_bar, St_rp_bar, Mt_ce_bar, Mt_St_oe_bar, Mt_St_we_bar,
 	An0, An1, An2, An3, Ca, Cb, Cc, Cd, Ce, Cf, Cg, Dp,
 	LD0, LD1, LD2, LD3, LD4, LD5, LD6, LD7);
-	input ClkPort, Sw0, btnU, btnD, Sw0, Sw1;
-	output St_ce_bar, St_rp_bar, Mt_ce_bar, Mt_St_oe_bar, Mt_St_we_bar;
-	output vga_h_sync, vga_v_sync, vga_r, vga_g, vga_b;
-	output An0, An1, An2, An3, Ca, Cb, Cc, Cd, Ce, Cf, Cg, Dp;
-	output LD0, LD1, LD2, LD3, LD4, LD5, LD6, LD7;
-	reg [2:0] vga_r, vga_g;
+  `include "constants.vh"
+  
+  input ClkPort, Sw0, btnU, btnD, Sw0, Sw1;
+  output St_ce_bar, St_rp_bar, Mt_ce_bar, Mt_St_oe_bar, Mt_St_we_bar;
+  output vga_h_sync, vga_v_sync, vga_r, vga_g, vga_b;
+  output An0, An1, An2, An3, Ca, Cb, Cc, Cd, Ce, Cf, Cg, Dp;
+  output LD0, LD1, LD2, LD3, LD4, LD5, LD6, LD7;
+  reg [2:0] vga_r, vga_g;
   reg [1:0] vga_b;
 	
 	//////////////////////////////////////////////////////////////////////////////////////////
