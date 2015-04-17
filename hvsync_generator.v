@@ -39,7 +39,7 @@ end
 always @(posedge clk)
 begin
    if(reset)
-      CounterY<=0; 
+      CounterY <= 0; 
    else if(CounterY == 10'h209)    //521
       CounterY <= 0;
    else if(CounterX == 10'h320)    //800

@@ -14,8 +14,8 @@ module final_project_top(ClkPort, vga_h_sync, vga_v_sync, vga_r, vga_g, vga_b, S
   output vga_h_sync, vga_v_sync, vga_r, vga_g, vga_b;
   output An0, An1, An2, An3, Ca, Cb, Cc, Cd, Ce, Cf, Cg, Dp;
   output LD0, LD1, LD2, LD3, LD4, LD5, LD6, LD7;
-  reg [2:0] vga_r, vga_g;
-  reg [1:0] vga_b;
+  reg [2:0] vga_r, vga_g = 3'b000;
+  reg [1:0] vga_b = 2'b00;
 	
 	//////////////////////////////////////////////////////////////////////////////////////////
 	
@@ -38,7 +38,26 @@ module final_project_top(ClkPort, vga_h_sync, vga_v_sync, vga_r, vga_g, vga_b, S
 	assign	button_clk = DIV_CLK[18];
 	assign	clk = DIV_CLK[1];
 	assign 	{St_ce_bar, St_rp_bar, Mt_ce_bar, Mt_St_oe_bar, Mt_St_we_bar} = {5'b11111};
-	
+  
+  
+  /////////////////////////////////////////////////////////////////
+  //////////////      Game control ends here    ///////////////////
+  /////////////////////////////////////////////////////////////////
+  
+  wire game_clk;
+  assign game_clk = DIV_CLK[19];
+
+  game_controller game_control(.clk(game_clk), .reset(reset));
+
+  
+  /////////////////////////////////////////////////////////////////
+  //////////////      Game control ends here    ///////////////////
+  /////////////////////////////////////////////////////////////////
+  
+
+  /////////////////////////////////////////////////////////////////
+  ///////////////   VGA control starts here   /////////////////
+  /////////////////////////////////////////////////////////////////
 	wire inDisplayArea;
 	wire [9:0] CounterX;
 	wire [9:0] CounterY;
@@ -48,34 +67,19 @@ module final_project_top(ClkPort, vga_h_sync, vga_v_sync, vga_r, vga_g, vga_b, S
 	wire [1:0] B;
 
   hvsync_generator syncgen(.clk(clk), .reset(reset),.vga_h_sync(vga_h_sync), .vga_v_sync(vga_v_sync), .inDisplayArea(inDisplayArea), .CounterX(CounterX), .CounterY(CounterY));
-  vga_controller controller(.clk(clk), .reset(reset), .CounterX(CounterX), .CounterY(CounterY), .r(R), .g(G) , .b(B));
-  /////////////////////////////////////////////////////////////////
-  ///////////////   VGA control starts here   /////////////////
-  /////////////////////////////////////////////////////////////////
-  reg [9:0] position;
+  vga_controller vga_control(.clk(clk), .reset(reset), .CounterX(CounterX), .CounterY(CounterY), .r(R), .g(G) , .b(B));
   
-  always @(posedge DIV_CLK[21])
-    begin
-      if(reset)
-        position <= 240;
-      else if(btnD && ~btnU)
-        position <= position + 2;
-      else if(btnU && ~btnD)
-        position <= position-2; 
-    end
+  always @(posedge clk)
+  begin
+    vga_r <= R & inDisplayArea;
+    vga_g <= G & inDisplayArea;
+    vga_b <= B & inDisplayArea;
+  end
+  
+  /////////////////////////////////////////////////////////////////
+  //////////////      VGA control ends here    ///////////////////
+  /////////////////////////////////////////////////////////////////
 
-	
-	always @(posedge clk)
-	begin
-		vga_r <= R & inDisplayArea;
-		vga_g <= G & inDisplayArea;
-		vga_b <= B & inDisplayArea;
-	end
-	
-	/////////////////////////////////////////////////////////////////
-	//////////////  	  VGA control ends here 	 ///////////////////
-	/////////////////////////////////////////////////////////////////
-	
 	/////////////////////////////////////////////////////////////////
 	//////////////  	  LD control starts here 	 ///////////////////
 	/////////////////////////////////////////////////////////////////
@@ -114,11 +118,11 @@ module final_project_top(ClkPort, vga_h_sync, vga_v_sync, vga_r, vga_g, vga_b, S
 	assign SSD3 = 4'b1111;
 	assign SSD2 = 4'b1111;
 	assign SSD1 = 4'b1111;
-	assign SSD0 = position[3:0];
+	assign SSD0 = 4'b1111;
 	
 	// need a scan clk for the seven segment display 
 	// 191Hz (50MHz / 2^18) works well
-	assign ssdscan_clk = DIV_CLK[19:18];	
+	assign ssdscan_clk = DIV_CLK[19:18];
 	assign An0	= !(~(ssdscan_clk[1]) && ~(ssdscan_clk[0]));  // when ssdscan_clk = 00
 	assign An1	= !(~(ssdscan_clk[1]) &&  (ssdscan_clk[0]));  // when ssdscan_clk = 01
 	assign An2	= !( (ssdscan_clk[1]) && ~(ssdscan_clk[0]));  // when ssdscan_clk = 10

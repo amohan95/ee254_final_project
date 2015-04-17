@@ -1,3 +1,14 @@
+/*
+* This module controls the color being output to the VGA given the current position of
+* the pointer in the VGA array and the game state.
+* 
+* Inputs: 25 mHz Clock, Reset Signal,
+*         Counter X and Counter Y from current col/row of VGA pointer,
+*         current data for game state (i.e. position of objects)
+*
+* Outputs: R, G, B value for current position of counters
+*/
+
 module vga_controller(input wire clk, reset,
                       input wire [9:0] CounterX, CounterY,
                       output reg [2:0] r, g,
@@ -14,12 +25,12 @@ module vga_controller(input wire clk, reset,
       /*
       * Field Frame Creation
       */
-      if(CounterX < FIELD_X_BEGIN || CounterX > (FIELD_X_END)) begin
+      if(CounterX < FIELD_X_BEGIN || CounterX > FIELD_X_END) begin
         r <= 3'b000;
         g <= 3'b100;
         b <= 2'b01;
       end
-      if(CounterY < FIELD_Y_BEGIN || CounterY > (FIELD_X_END)) begin
+      if(CounterY < FIELD_Y_BEGIN || CounterY > FIELD_X_END) begin
         r <= 3'b000;
         g <= 3'b100;
         b <= 2'b01;
