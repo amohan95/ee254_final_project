@@ -14,8 +14,11 @@ module final_project_top(ClkPort, vga_h_sync, vga_v_sync, vga_r, vga_g, vga_b, S
   output vga_h_sync, vga_v_sync, vga_r, vga_g, vga_b;
   output An0, An1, An2, An3, Ca, Cb, Cc, Cd, Ce, Cf, Cg, Dp;
   output LD0, LD1, LD2, LD3, LD4, LD5, LD6, LD7;
-  reg [2:0] vga_r, vga_g = 3'b000;
-  reg [1:0] vga_b = 2'b00;
+  reg [2:0] vga_r, vga_g;
+  reg [1:0] vga_b;
+  initial vga_r <= 3'b000;
+  initial vga_g <= 3'b000;
+  initial vga_b <= 2'b00;
 	
 	//////////////////////////////////////////////////////////////////////////////////////////
 	
@@ -45,9 +48,16 @@ module final_project_top(ClkPort, vga_h_sync, vga_v_sync, vga_r, vga_g, vga_b, S
   /////////////////////////////////////////////////////////////////
   
   wire game_clk;
+  wire [9:0] ball_loc_x, ball_loc_y;
+  wire [9:0] left_paddle_loc, right_paddle_loc;
+  wire [3:0] left_score, right_score;
+
   assign game_clk = DIV_CLK[19];
 
-  game_controller game_control(.clk(game_clk), .reset(reset));
+  game_controller game_control(.clk(game_clk), .reset(reset),
+                               .ball_loc_x(ball_loc_x), .ball_loc_y(ball_loc_y),
+                               .left_paddle_loc(left_paddle_loc), .right_paddle_loc(right_paddle_loc),
+                               .left_score(left_score), .right_score(right_score));
 
   
   /////////////////////////////////////////////////////////////////
@@ -67,7 +77,12 @@ module final_project_top(ClkPort, vga_h_sync, vga_v_sync, vga_r, vga_g, vga_b, S
 	wire [1:0] B;
 
   hvsync_generator syncgen(.clk(clk), .reset(reset),.vga_h_sync(vga_h_sync), .vga_v_sync(vga_v_sync), .inDisplayArea(inDisplayArea), .CounterX(CounterX), .CounterY(CounterY));
-  vga_controller vga_control(.clk(clk), .reset(reset), .CounterX(CounterX), .CounterY(CounterY), .r(R), .g(G) , .b(B));
+  vga_controller vga_control(.clk(clk), .reset(reset), 
+                             .CounterX(CounterX), .CounterY(CounterY),
+                             .ball_loc_x(ball_loc_x), .ball_loc_y(ball_loc_y),
+                             .left_paddle_loc(left_paddle_loc), .right_paddle_loc(right_paddle_loc),
+                             .left_score(left_score), .right_score(right_score),
+                             .r(R), .g(G) , .b(B));
   
   always @(posedge clk)
   begin
