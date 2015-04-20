@@ -52,7 +52,7 @@ module final_project_top(ClkPort, vga_h_sync, vga_v_sync, vga_r, vga_g, vga_b, S
   wire [9:0] left_paddle_loc, right_paddle_loc;
   wire [3:0] left_score, right_score;
 
-  assign game_clk = DIV_CLK[19];
+  assign game_clk = DIV_CLK[18];
 
   game_controller game_control(.clk(game_clk), .reset(reset),
                                .ball_loc_x(ball_loc_x), .ball_loc_y(ball_loc_y),

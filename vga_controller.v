@@ -28,6 +28,11 @@ module vga_controller(input wire clk, reset,
       b <= 2'b00;      
     end
     else begin
+      /* Defaults for empty field */
+      r <= 3'b000;
+      g <= 3'b000;
+      b <= 2'b00;
+
       /*
       * Field Frame Creation
       */
@@ -36,7 +41,7 @@ module vga_controller(input wire clk, reset,
         g <= 3'b100;
         b <= 2'b01;
       end
-      if(CounterY < FIELD_Y_BEGIN || CounterY > FIELD_X_END) begin
+      if(CounterY < FIELD_Y_BEGIN || CounterY > FIELD_Y_END) begin
         r <= 3'b000;
         g <= 3'b100;
         b <= 2'b01;

@@ -24,9 +24,11 @@ localparam MID_FIELD_Y = Y_MAX / 2;
 */
 
 localparam PADDLE_RADIUS = 25;
+localparam BALL_RADIUS = 3;
 
-localparam INITIAL_VELOCITY = 5;
-localparam VELOCITY_INCREASE = 5;
+localparam PADDLE_VELOCITY = 5;
+localparam INITIAL_VELOCITY = 2;
+localparam VELOCITY_INCREASE_SCALE = 1.2;
 
 localparam WINNING_SCORE = 7;
 
