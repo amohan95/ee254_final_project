@@ -7,6 +7,8 @@ module game_controller(input wire clk, reset, start,
   reg signed [3:0] ball_velocity_x;
   reg signed [3:0] ball_velocity_y;
 
+  reg signed [10:0] tmp_reg;
+
   reg win_flag; // 0 = left player is winner, 1 = right player is winner
   localparam QI = 3'b000;
   localparam QGAME_MOVE = 3'b001;
@@ -30,18 +32,12 @@ module game_controller(input wire clk, reset, start,
       begin : GAME_STATE
         case(state)
           QI: begin
-            ball_loc_x <= MID_FIELD_X;
-            ball_loc_y <= MID_FIELD_Y;
-            left_paddle_loc <= MID_FIELD_Y;
-            right_paddle_loc <= MID_FIELD_Y;
+            reset_field();
             left_score <= 0;
             right_score <= 0;
-            ball_velocity_x <= 0;
-            ball_velocity_y <= 0;
             win_flag <= 0;
             if(start) begin
               state <= QGAME_MOVE;
-              ball_velocity_x <= INITIAL_VELOCITY;
             end
           end
           QGAME_MOVE: begin
@@ -55,16 +51,16 @@ module game_controller(input wire clk, reset, start,
             calculate_collisions();
           end
           QPOINT_SCORED: begin
-            if(left_score == WINNING_SCORE || right_score == WINNING_SCORE) begin
+            if(left_score == WINNING_SCORE) begin
+              win_flag <= 0;
+              state <= QGAME_END;
+            end
+            if(right_score == WINNING_SCORE) begin
+              win_flag <= 1;
               state <= QGAME_END;
             end
             else begin
-              ball_loc_x <= MID_FIELD_X;
-              ball_loc_y <= MID_FIELD_Y;
-              left_paddle_loc <= MID_FIELD_Y;
-              right_paddle_loc <= MID_FIELD_Y;
-              ball_velocity_x <= 0;
-              ball_velocity_y <= 0;
+              reset_field();
               state <= QGAME_MOVE;
             end
           end
@@ -75,28 +71,54 @@ module game_controller(input wire clk, reset, start,
 		  end
     end
   end
+
   /*
   * Begin Tasks
   */
+  task reset_field;
+    begin
+      ball_loc_x <= MID_FIELD_X;
+      ball_loc_y <= MID_FIELD_Y;
+      left_paddle_loc <= MID_FIELD_Y;
+      right_paddle_loc <= MID_FIELD_Y;
+      ball_velocity_x <= INITIAL_VELOCITY;
+      ball_velocity_y <= 0;
+    end
+  endtask
+
   task calculate_collisions; // Calculate ball collisions & compute velocity
-  begin
-    /* TOP */
-    if(ball_loc_y - FIELD_Y_BEGIN <= BALL_RADIUS) begin
-
+    begin
+      /* TOP */
+      if(ball_loc_y - FIELD_Y_BEGIN <= BALL_RADIUS) begin
+        ball_velocity_y <= -ball_velocity_y; 
+      end
+      /* BOTTOM */
+      if(FIELD_Y_END - ball_loc_y <= BALL_RADIUS) begin
+        ball_velocity_y <= -ball_velocity_y;
+      end
+      /* LEFT */
+      if(ball_loc_x - FIELD_X_BEGIN <= BALL_RADIUS) begin
+        tmp_reg = ball_loc_y - left_paddle_loc;
+        if(tmp_reg <= PADDLE_RADIUS && tmp_reg >= -PADDLE_RADIUS) begin
+          ball_velocity_x <= -ball_velocity_x;
+        end
+        else begin
+          state <= QPOINT_SCORED;
+          right_score <= right_score + 1;
+        end
+      end
+      /* RIGHT */    
+      if(FIELD_X_END - ball_loc_x <= BALL_RADIUS) begin
+        tmp_reg = ball_loc_y - right_paddle_loc;
+        if(tmp_reg <= PADDLE_RADIUS && tmp_reg >= -PADDLE_RADIUS) begin
+          ball_velocity_x <= -ball_velocity_x;
+        end
+        else begin
+          state <= QPOINT_SCORED;
+          left_score <= left_score + 1;
+        end
+      end
     end
-    /* BOTTOM */
-    if(FIELD_Y_END - ball_loc_y <= BALL_RADIUS) begin
-
-    end
-    /* LEFT */
-    if(ball_loc_x - FIELD_X_BEGIN <= BALL_RADIUS) begin
-
-    end
-    /* RIGHT */    
-    if(FIELD_X_END - ball_loc_x <= BALL_RADIUS) begin
-
-    end
-  end
   endtask
   /*
   * End Tasks

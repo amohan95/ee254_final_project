@@ -34,7 +34,7 @@ module vga_controller(input wire clk, reset,
       b <= 2'b00;
 
       /*
-      * Field Frame Creation
+      * Begin Field Frame Creation
       */
       if(CounterX < FIELD_X_BEGIN || CounterX > FIELD_X_END) begin
         r <= 3'b000;
