@@ -49,6 +49,28 @@ module vga_controller(input wire clk, reset,
       /*
       * End Field Frame Creation
       */
+  		/*
+  		* Ball and Paddle Creation
+  		*/
+      if(CounterX <= ball_loc_x + BALL_RADIUS && CounterX >= ball_loc_x - BALL_RADIUS
+      && CounterY <= ball_loc_y + BALL_RADIUS && CounterY >= ball_loc_y - BALL_RADIUS) begin
+        r <= 3'b111;
+        g <= 3'b111;
+        b <= 2'b11;
+      end
+      if((CounterX <= FIELD_X_BEGIN + PADDLE_THICKNESS && CounterX >= FIELD_X_BEGIN
+       && CounterY <= left_paddle_loc + PADDLE_RADIUS
+       && CounterY >= left_paddle_loc - PADDLE_RADIUS) ||
+         (CounterX >= FIELD_X_END - PADDLE_THICKNESS && CounterX <= FIELD_X_END
+       && CounterY <= right_paddle_loc + PADDLE_RADIUS
+       && CounterY >= right_paddle_loc - PADDLE_RADIUS)) begin
+        r <= 3'b111;
+        g <= 3'b111;
+        b <= 2'b11;
+       end
+  		/*
+  		* Ball and Paddle Creation
+  		*/
     end
   end
 endmodule

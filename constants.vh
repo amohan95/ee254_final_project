@@ -21,13 +21,14 @@ localparam MID_FIELD_Y = Y_MAX / 2;
 /*
 * Begin Gameplay Parameters
 */
-localparam PADDLE_RADIUS = 12;
-localparam BALL_RADIUS = 3;
+localparam PADDLE_RADIUS = 36;
+localparam PADDLE_THICKNESS = 4;
+localparam BALL_RADIUS = 6;
 
 localparam PADDLE_VELOCITY = 5;
 
-localparam INITIAL_VELOCITY = 2;
-localparam VELOCITY_INCREASE_RATE = 1;
+localparam INITIAL_VELOCITY = 3;
+localparam VELOCITY_INCREASE_RATE = 2;
 
 localparam WINNING_SCORE = 7;
 /*

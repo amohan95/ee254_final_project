@@ -4,9 +4,9 @@ module game_controller(input wire clk, reset, start,
                        output reg [3:0] left_score, right_score);
   `include "constants.vh"
   reg [2:0] state;
-  reg signed [3:0] ball_velocity_x;
-  reg signed [3:0] ball_velocity_y;
-
+  reg signed [4:0] ball_velocity_x;
+  reg signed [4:0] ball_velocity_y;
+  reg [2:0] move_counter;
   reg signed [10:0] tmp_reg;
 
   reg win_flag; // 0 = left player is winner, 1 = right player is winner
@@ -15,16 +15,12 @@ module game_controller(input wire clk, reset, start,
   localparam QCALCULATE_COLLISIONS = 3'b010;
   localparam QPOINT_SCORED = 3'b011;
   localparam QGAME_END = 3'b100;
+  initial state <= QI;
   always @(posedge clk or posedge reset) begin
     if (reset) begin
-      ball_loc_x <= MID_FIELD_X;
-      ball_loc_y <= MID_FIELD_Y;
-      left_paddle_loc <= MID_FIELD_Y;
-      right_paddle_loc <= MID_FIELD_Y;
+      reset_field();
       left_score <= 0;
       right_score <= 0;
-      ball_velocity_x <= 0;
-      ball_velocity_y <= 0;
       win_flag <= 0;
       state <= QI;
     end
@@ -39,12 +35,16 @@ module game_controller(input wire clk, reset, start,
             if(start) begin
               state <= QGAME_MOVE;
             end
+				    state <= QGAME_MOVE;
           end
           QGAME_MOVE: begin
-            // TODO: Use input from joystick to move paddles
-            ball_loc_x <= ball_loc_x + ball_velocity_x;
-            ball_loc_y <= ball_loc_y + ball_velocity_y;
-            state <= QCALCULATE_COLLISIONS;
+            move_counter <= move_counter + 1;
+            if(move_counter == 0) begin
+              // TODO: Use input from joystick to move paddles
+              ball_loc_x <= ball_loc_x + ball_velocity_x;
+              ball_loc_y <= ball_loc_y + ball_velocity_y;
+              state <= QCALCULATE_COLLISIONS;
+            end
           end
           QCALCULATE_COLLISIONS: begin
             state <= QGAME_MOVE;
@@ -77,6 +77,7 @@ module game_controller(input wire clk, reset, start,
   */
   task reset_field;
     begin
+	    move_counter <= 0;
       ball_loc_x <= MID_FIELD_X;
       ball_loc_y <= MID_FIELD_Y;
       left_paddle_loc <= MID_FIELD_Y;
@@ -90,17 +91,17 @@ module game_controller(input wire clk, reset, start,
     begin
       /* TOP */
       if(ball_loc_y - FIELD_Y_BEGIN <= BALL_RADIUS) begin
-        ball_velocity_y <= -ball_velocity_y; 
+        ball_velocity_y <= -1 * ball_velocity_y; 
       end
       /* BOTTOM */
       if(FIELD_Y_END - ball_loc_y <= BALL_RADIUS) begin
-        ball_velocity_y <= -ball_velocity_y;
+        ball_velocity_y <= -1 * ball_velocity_y;
       end
       /* LEFT */
       if(ball_loc_x - FIELD_X_BEGIN <= BALL_RADIUS) begin
         tmp_reg = ball_loc_y - left_paddle_loc;
-        if(tmp_reg <= PADDLE_RADIUS && tmp_reg >= -PADDLE_RADIUS) begin
-          ball_velocity_x <= -ball_velocity_x;
+        if(tmp_reg <= PADDLE_RADIUS && tmp_reg >= -1 * PADDLE_RADIUS) begin
+          ball_velocity_x <= -1 * ball_velocity_x;
         end
         else begin
           state <= QPOINT_SCORED;
@@ -110,8 +111,8 @@ module game_controller(input wire clk, reset, start,
       /* RIGHT */    
       if(FIELD_X_END - ball_loc_x <= BALL_RADIUS) begin
         tmp_reg = ball_loc_y - right_paddle_loc;
-        if(tmp_reg <= PADDLE_RADIUS && tmp_reg >= -PADDLE_RADIUS) begin
-          ball_velocity_x <= -ball_velocity_x;
+        if(tmp_reg <= PADDLE_RADIUS && tmp_reg >= -1 * PADDLE_RADIUS) begin
+          ball_velocity_x <= -1 * ball_velocity_x;
         end
         else begin
           state <= QPOINT_SCORED;
