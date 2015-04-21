@@ -6,8 +6,8 @@ module game_controller(input wire clk, reset, start,
   reg [2:0] state;
   reg [4:0] ball_velocity_x;
   reg [4:0] ball_velocity_y;
-  reg dir_x; // 0 is left, 1 is right
-  reg dir_y; // 0 is up, 1 is down
+  reg dir_x; // 0 = left, 1 = right
+  reg dir_y; // 0 = up, 1 = down
   reg [2:0] move_counter;
   reg signed [10:0] tmp_reg;
   reg win_flag; // 0 = left player is winner, 1 = right player is winner
@@ -80,7 +80,7 @@ module game_controller(input wire clk, reset, start,
   /*
   * Begin Tasks
   */
-  task reset_field;
+  task reset_field; // Reset field to original state
     begin
 	    move_counter <= 0;
       ball_loc_x <= MID_FIELD_X;
@@ -116,7 +116,8 @@ module game_controller(input wire clk, reset, start,
       end
 
       /* LEFT PADDLE */
-      if(ball_loc_x - (FIELD_X_BEGIN + PADDLE_THICKNESS) <= BALL_RADIUS) begin
+      if(ball_loc_x - LEFT_PADDLE_BEGIN <= BALL_RADIUS ||
+         ball_loc_x - LEFT_PADDLE_BEGIN + PADDLE_THICKNESS <= BALL_RADIUS) begin
         tmp_reg = ball_loc_y - left_paddle_loc;
         if(tmp_reg <= PADDLE_RADIUS && tmp_reg >= -1 * PADDLE_RADIUS) begin
           right_score <= right_score;
@@ -126,7 +127,8 @@ module game_controller(input wire clk, reset, start,
         end
       end
       /* RIGHT PADDLE */
-      if(FIELD_X_END - PADDLE_THICKNESS - ball_loc_x <= BALL_RADIUS) begin
+      if(RIGHT_PADDLE_BEGIN + PADDLE_THICKNESS - ball_loc_x <= BALL_RADIUS ||
+         RIGHT_PADDLE_BEGIN - ball_loc_x <= BALL_RADIUS) begin
         tmp_reg = ball_loc_y - right_paddle_loc;
         if(tmp_reg <= PADDLE_RADIUS && tmp_reg >= -1 * PADDLE_RADIUS) begin
           left_score <= left_score;

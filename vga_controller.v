@@ -58,10 +58,10 @@ module vga_controller(input wire clk, reset,
         g <= 3'b111;
         b <= 2'b11;
       end
-      if((CounterX <= FIELD_X_BEGIN + PADDLE_THICKNESS && CounterX >= FIELD_X_BEGIN
+      if((CounterX <= LEFT_PADDLE_BEGIN + PADDLE_THICKNESS && CounterX >= LEFT_PADDLE_BEGIN
        && CounterY <= left_paddle_loc + PADDLE_RADIUS
        && CounterY >= left_paddle_loc - PADDLE_RADIUS) ||
-         (CounterX >= FIELD_X_END - PADDLE_THICKNESS && CounterX <= FIELD_X_END
+         (CounterX >= RIGHT_PADDLE_BEGIN && CounterX <= RIGHT_PADDLE_BEGIN + PADDLE_THICKNESS
        && CounterY <= right_paddle_loc + PADDLE_RADIUS
        && CounterY >= right_paddle_loc - PADDLE_RADIUS)) begin
         r <= 3'b111;
