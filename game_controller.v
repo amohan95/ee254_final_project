@@ -18,6 +18,7 @@ module game_controller(input wire clk, reset, start,
   reg [4:0] y_move_counter;
   reg [4:0] x_move_counter_max;
   reg [4:0] y_move_counter_max;
+  reg [10:0] tmp_counter_max_sum;
 
   reg signed [10:0] tmp_reg;
   reg win_flag; // 0 = left player is winner, 1 = right player is winner
@@ -85,8 +86,8 @@ module game_controller(input wire clk, reset, start,
             state <= QGAME_MOVE;
             check_x <= 0;
             check_y <= 0;
-            if(check_x) check_x_collisions();
             if(check_y) check_y_collisions();
+            if(check_x) check_x_collisions();
           end
           QPOINT_SCORED: begin
             if(left_score == WINNING_SCORE) begin
@@ -140,13 +141,14 @@ module game_controller(input wire clk, reset, start,
 
   task check_y_collisions;
     begin
+      state <= QGAME_MOVE;
       /* TOP */
       if(ball_loc_y - FIELD_Y_BEGIN <= BALL_RADIUS) begin
-        dir_y <= 0;
+        dir_y <= 1;
       end
       /* BOTTOM */
       if(FIELD_Y_END - ball_loc_y <= BALL_RADIUS) begin
-        dir_y <= 1;
+        dir_y <= 0;
       end
     end
   endtask
@@ -159,7 +161,7 @@ module game_controller(input wire clk, reset, start,
         right_score <= right_score + 1;
       end
       /* RIGHT */    
-      if(FIELD_X_END - ball_loc_x <= BALL_RADIUS) begin
+      else if(FIELD_X_END - ball_loc_x <= BALL_RADIUS) begin
         state <= QPOINT_SCORED;
         left_score <= left_score + 1;
       end
@@ -176,7 +178,7 @@ module game_controller(input wire clk, reset, start,
         end
       end
       /* RIGHT PADDLE */
-      if(RIGHT_PADDLE_BEGIN + PADDLE_THICKNESS - ball_loc_x <= BALL_RADIUS ||
+      else if(RIGHT_PADDLE_BEGIN + PADDLE_THICKNESS - ball_loc_x <= BALL_RADIUS ||
          RIGHT_PADDLE_BEGIN - ball_loc_x <= BALL_RADIUS) begin
         tmp_reg = ball_loc_y - right_paddle_loc;
         if(tmp_reg <= PADDLE_RADIUS && tmp_reg >= -1 * PADDLE_RADIUS) begin
@@ -189,22 +191,34 @@ module game_controller(input wire clk, reset, start,
     end
   endtask
 
-  task calculate_paddle_collision;
+  task calculate_paddle_collision; // Change update rates for y and x based on collision location
     begin
+      tmp_counter_max_sum = x_move_counter_max + y_move_counter_max;
       if(tmp_reg >= PADDLE_RADIUS - 14) begin
-            
+        dir_y <= 0;
+        x_move_counter_max <= (tmp_counter_max_sum >> 2);
+        y_move_counter_max <= (tmp_counter_max_sum >> 2) + (tmp_counter_max_sum >> 1);
       end
       else if(tmp_reg >= PADDLE_RADIUS - 28) begin
-        
+        dir_y <= 0;
+        x_move_counter_max <= (tmp_counter_max_sum >> 1);
+        y_move_counter_max <= (tmp_counter_max_sum >> 1);
       end
       else if(tmp_reg >= PADDLE_RADIUS - 42) begin
-        
+        if(tmp_counter_max_sum - 2 >= XY_MOVE_COUNTER_MIN) begin
+          x_move_counter_max <= x_move_counter_max - 1;
+          y_move_counter_max <= y_move_counter_max - 1;
+        end 
       end
       else if(tmp_reg >= PADDLE_RADIUS - 56) begin
-        
+        dir_y <= 1;
+        x_move_counter_max <= (tmp_counter_max_sum >> 1);
+        y_move_counter_max <= (tmp_counter_max_sum >> 1);
       end
       else begin
-        
+        dir_y <= 1;
+        x_move_counter_max <= (tmp_counter_max_sum >> 2);
+        y_move_counter_max <= (tmp_counter_max_sum >> 2) + (tmp_counter_max_sum >> 1);
       end
     end
   endtask
