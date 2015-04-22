@@ -2,7 +2,7 @@
 /*
 * Begin Gameplay Parameters
 */
-localparam PADDLE_RADIUS = 36;
+localparam PADDLE_RADIUS = 35;
 localparam PADDLE_THICKNESS = 6;
 localparam BALL_RADIUS = 6;
 

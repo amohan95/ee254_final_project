@@ -169,8 +169,9 @@ module game_controller(input wire clk, reset, start,
          ball_loc_x - LEFT_PADDLE_BEGIN + PADDLE_THICKNESS <= BALL_RADIUS) begin
         tmp_reg = ball_loc_y - left_paddle_loc;
         if(tmp_reg <= PADDLE_RADIUS && tmp_reg >= -1 * PADDLE_RADIUS) begin
+          calculate_paddle_collision();
           right_score <= right_score;
-          dir_x <= ~dir_x;
+          dir_x <= 1;
           state <= QGAME_MOVE;
         end
       end
@@ -179,17 +180,32 @@ module game_controller(input wire clk, reset, start,
          RIGHT_PADDLE_BEGIN - ball_loc_x <= BALL_RADIUS) begin
         tmp_reg = ball_loc_y - right_paddle_loc;
         if(tmp_reg <= PADDLE_RADIUS && tmp_reg >= -1 * PADDLE_RADIUS) begin
+          calculate_paddle_collision();
           left_score <= left_score;
-          dir_x <= ~dir_x;
+          dir_x <= 0;
           state <= QGAME_MOVE;
         end
       end
     end
   endtask
 
-  task calculate_collisions; // Calculate ball collisions & compute velocity
+  task calculate_paddle_collision;
     begin
-      
+      if(tmp_reg >= PADDLE_RADIUS - 14) begin
+            
+      end
+      else if(tmp_reg >= PADDLE_RADIUS - 28) begin
+        
+      end
+      else if(tmp_reg >= PADDLE_RADIUS - 42) begin
+        
+      end
+      else if(tmp_reg >= PADDLE_RADIUS - 56) begin
+        
+      end
+      else begin
+        
+      end
     end
   endtask
   /*
