@@ -196,8 +196,8 @@ module game_controller(input wire clk, reset, start,
       tmp_counter_max_sum = x_move_counter_max + y_move_counter_max;
       if(tmp_reg >= PADDLE_RADIUS - 14) begin
         dir_y <= 0;
-        x_move_counter_max <= (tmp_counter_max_sum >> 2);
-        y_move_counter_max <= (tmp_counter_max_sum >> 2) + (tmp_counter_max_sum >> 1);
+        x_move_counter_max <= (tmp_counter_max_sum >> 2) + (tmp_counter_max_sum >> 1);
+        y_move_counter_max <= (tmp_counter_max_sum >> 2);
       end
       else if(tmp_reg >= PADDLE_RADIUS - 28) begin
         dir_y <= 0;
@@ -217,8 +217,8 @@ module game_controller(input wire clk, reset, start,
       end
       else begin
         dir_y <= 1;
-        x_move_counter_max <= (tmp_counter_max_sum >> 2);
-        y_move_counter_max <= (tmp_counter_max_sum >> 2) + (tmp_counter_max_sum >> 1);
+        x_move_counter_max <= (tmp_counter_max_sum >> 2) + (tmp_counter_max_sum >> 1);
+        y_move_counter_max <= (tmp_counter_max_sum >> 2);
       end
     end
   endtask
