@@ -11,10 +11,13 @@ module game_controller(input wire clk, reset, start,
   
   reg [4:0] paddle_move_counter;
 
-  reg [3:0] x_move_counter;
-  reg [3:0] y_move_counter;
-  reg [3:0] x_move_counter_max;
-  reg [3:0] y_move_counter_max;
+  reg check_x;
+  reg check_y;
+
+  reg [4:0] x_move_counter;
+  reg [4:0] y_move_counter;
+  reg [4:0] x_move_counter_max;
+  reg [4:0] y_move_counter_max;
 
   reg signed [10:0] tmp_reg;
   reg win_flag; // 0 = left player is winner, 1 = right player is winner
@@ -60,13 +63,16 @@ module game_controller(input wire clk, reset, start,
 
             if(paddle_move_counter == PADDLE_MOVE_COUNTER_MAX) begin
               // TODO: Use input from joystick to move paddles
+              check_x <= 1;
             end
             if(x_move_counter == x_move_counter_max) begin
               ball_loc_x <= dir_x ? ball_loc_x + ball_velocity_x : ball_loc_x - ball_velocity_x;
+              check_x <= 1;
               x_move_counter <= 0;
             end
             if(y_move_counter == y_move_counter_max) begin
               ball_loc_y <= dir_y ? ball_loc_y + ball_velocity_y : ball_loc_y - ball_velocity_y;
+              check_y <= 1;
               y_move_counter <= 0;
             end
             if(paddle_move_counter == PADDLE_MOVE_COUNTER_MAX
@@ -77,7 +83,10 @@ module game_controller(input wire clk, reset, start,
           end
           QCALCULATE_COLLISIONS: begin
             state <= QGAME_MOVE;
-            calculate_collisions();
+            check_x <= 0;
+            check_y <= 0;
+            if(check_x) check_x_collisions();
+            if(check_y) check_y_collisions();
           end
           QPOINT_SCORED: begin
             if(left_score == WINNING_SCORE) begin
@@ -121,21 +130,29 @@ module game_controller(input wire clk, reset, start,
       ball_velocity_x <= INITIAL_VELOCITY;
       ball_velocity_y <= INITIAL_VELOCITY;
       
+      check_x <= 0;
+      check_y <= 0;
+
       dir_x <= 1;
       dir_y <= 1;
     end
   endtask
 
-  task calculate_collisions; // Calculate ball collisions & compute velocity
+  task check_y_collisions;
     begin
       /* TOP */
       if(ball_loc_y - FIELD_Y_BEGIN <= BALL_RADIUS) begin
-        dir_y <= ~dir_y;
+        dir_y <= 0;
       end
       /* BOTTOM */
       if(FIELD_Y_END - ball_loc_y <= BALL_RADIUS) begin
-        dir_y <= ~dir_y;
+        dir_y <= 1;
       end
+    end
+  endtask
+  
+  task check_x_collisions;
+    begin
       /* LEFT */
       if(ball_loc_x - FIELD_X_BEGIN <= BALL_RADIUS) begin
         state <= QPOINT_SCORED;
@@ -167,6 +184,12 @@ module game_controller(input wire clk, reset, start,
           state <= QGAME_MOVE;
         end
       end
+    end
+  endtask
+
+  task calculate_collisions; // Calculate ball collisions & compute velocity
+    begin
+      
     end
   endtask
   /*
