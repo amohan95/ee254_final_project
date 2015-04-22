@@ -8,7 +8,12 @@ localparam BALL_RADIUS = 6;
 
 localparam PADDLE_VELOCITY = 5;
 
-localparam INITIAL_VELOCITY = 3;
+localparam INITIAL_VELOCITY = 1;
+
+localparam PADDLE_MOVE_COUNTER_MAX = 20;
+localparam X_MOVE_COUNTER_INIT = 10;
+localparam Y_MOVE_COUNTER_INIT = 10;
+
 localparam VELOCITY_INCREASE_RATE = 2;
 
 localparam WINNING_SCORE = 7;

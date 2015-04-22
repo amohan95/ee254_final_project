@@ -8,7 +8,14 @@ module game_controller(input wire clk, reset, start,
   reg [4:0] ball_velocity_y;
   reg dir_x; // 0 = left, 1 = right
   reg dir_y; // 0 = up, 1 = down
-  reg [2:0] move_counter;
+  
+  reg [4:0] paddle_move_counter;
+
+  reg [3:0] x_move_counter;
+  reg [3:0] y_move_counter;
+  reg [3:0] x_move_counter_max;
+  reg [3:0] y_move_counter_max;
+
   reg signed [10:0] tmp_reg;
   reg win_flag; // 0 = left player is winner, 1 = right player is winner
 
@@ -21,6 +28,10 @@ module game_controller(input wire clk, reset, start,
   initial state <= QI;
   initial dir_x <= 1;
   initial dir_y <= 1;
+  
+  initial x_move_counter_max <= X_MOVE_COUNTER_INIT;
+  initial y_move_counter_max <= Y_MOVE_COUNTER_INIT;
+
   always @(posedge clk or posedge reset) begin
     if (reset) begin
       reset_field();
@@ -43,11 +54,24 @@ module game_controller(input wire clk, reset, start,
 				    state <= QGAME_MOVE;
           end
           QGAME_MOVE: begin
-            move_counter <= move_counter + 1;
-            if(move_counter == 0) begin
+            x_move_counter <= x_move_counter + 1;
+            y_move_counter <= y_move_counter + 1;
+            paddle_move_counter <= paddle_move_counter + 1;
+
+            if(paddle_move_counter == PADDLE_MOVE_COUNTER_MAX) begin
               // TODO: Use input from joystick to move paddles
+            end
+            if(x_move_counter == x_move_counter_max) begin
               ball_loc_x <= dir_x ? ball_loc_x + ball_velocity_x : ball_loc_x - ball_velocity_x;
+              x_move_counter <= 0;
+            end
+            if(y_move_counter == y_move_counter_max) begin
               ball_loc_y <= dir_y ? ball_loc_y + ball_velocity_y : ball_loc_y - ball_velocity_y;
+              y_move_counter <= 0;
+            end
+            if(paddle_move_counter == PADDLE_MOVE_COUNTER_MAX
+            || x_move_counter == x_move_counter_max
+            || y_move_counter == y_move_counter_max) begin
               state <= QCALCULATE_COLLISIONS;
             end
           end
@@ -82,13 +106,21 @@ module game_controller(input wire clk, reset, start,
   */
   task reset_field; // Reset field to original state
     begin
-	    move_counter <= 0;
+	    paddle_move_counter <= 0;
+      x_move_counter <= 0;
+      y_move_counter <= 0;
+      x_move_counter_max <= X_MOVE_COUNTER_INIT;
+      y_move_counter_max <= Y_MOVE_COUNTER_INIT;
+      
       ball_loc_x <= MID_FIELD_X;
       ball_loc_y <= MID_FIELD_Y;
+      
       left_paddle_loc <= MID_FIELD_Y;
       right_paddle_loc <= MID_FIELD_Y;
+      
       ball_velocity_x <= INITIAL_VELOCITY;
-      ball_velocity_y <= 0;
+      ball_velocity_y <= INITIAL_VELOCITY;
+      
       dir_x <= 1;
       dir_y <= 1;
     end
@@ -122,7 +154,6 @@ module game_controller(input wire clk, reset, start,
         if(tmp_reg <= PADDLE_RADIUS && tmp_reg >= -1 * PADDLE_RADIUS) begin
           right_score <= right_score;
           dir_x <= ~dir_x;
-          ball_velocity_x <= ball_velocity_x + VELOCITY_INCREASE_RATE;
           state <= QGAME_MOVE;
         end
       end
@@ -133,7 +164,6 @@ module game_controller(input wire clk, reset, start,
         if(tmp_reg <= PADDLE_RADIUS && tmp_reg >= -1 * PADDLE_RADIUS) begin
           left_score <= left_score;
           dir_x <= ~dir_x;
-          ball_velocity_x <= ball_velocity_x + VELOCITY_INCREASE_RATE;
           state <= QGAME_MOVE;
         end
       end
