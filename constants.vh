@@ -5,8 +5,8 @@ localparam PADDLE_RADIUS = 35;
 localparam PADDLE_THICKNESS = 6;
 localparam BALL_RADIUS = 6;
 
-localparam PADDLE_MOVE_COUNTER_MAX = 15;
-localparam PADDLE_VELOCITY = 2;
+localparam PADDLE_MOVE_COUNTER_MAX = 10;
+localparam PADDLE_VELOCITY = 4;
 
 localparam INITIAL_VELOCITY = 2;
 
@@ -17,7 +17,7 @@ localparam XY_MOVE_COUNTER_MIN = 16;
 
 localparam VELOCITY_INCREASE_RATE = 2;
 
-localparam WINNING_SCORE = 7;
+localparam WINNING_SCORE = 4;
 
 localparam JOYSTICK_UP = 600;
 localparam JOYSTICK_DOWN = 300;
