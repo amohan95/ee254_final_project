@@ -130,10 +130,10 @@ module final_project_top(ClkPort, vga_h_sync, vga_v_sync, vga_r, vga_g, vga_b, S
 	wire 	[3:0]	SSD0, SSD1, SSD2, SSD3;
 	wire 	[1:0] ssdscan_clk;
 	
-	assign SSD3 = 4'b1111;
-	assign SSD2 = 4'b1111;
-	assign SSD1 = 4'b1111;
-	assign SSD0 = 4'b1111;
+  assign SSD0 = right_score;
+  assign SSD1 = 4'b1111;
+  assign SSD2 = 4'b1111;
+  assign SSD3 = left_score;
 	
 	// need a scan clk for the seven segment display 
 	// 191Hz (50MHz / 2^18) works well

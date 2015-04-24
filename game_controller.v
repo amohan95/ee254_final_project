@@ -94,7 +94,7 @@ module game_controller(input wire clk, reset, start,
               win_flag <= 0;
               state <= QGAME_END;
             end
-            if(right_score == WINNING_SCORE) begin
+            else if(right_score == WINNING_SCORE) begin
               win_flag <= 1;
               state <= QGAME_END;
             end

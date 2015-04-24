@@ -10,8 +10,8 @@ localparam PADDLE_VELOCITY = 2;
 
 localparam INITIAL_VELOCITY = 2;
 
-localparam X_MOVE_COUNTER_INIT = 7;
-localparam Y_MOVE_COUNTER_INIT = 2;
+localparam X_MOVE_COUNTER_INIT = 15;
+localparam Y_MOVE_COUNTER_INIT = 15;
 
 localparam XY_MOVE_COUNTER_MIN = 10;
 

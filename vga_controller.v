@@ -58,6 +58,7 @@ module vga_controller(input wire clk, reset,
         g <= 3'b111;
         b <= 2'b11;
       end
+      
       if((CounterX <= LEFT_PADDLE_BEGIN + PADDLE_THICKNESS && CounterX >= LEFT_PADDLE_BEGIN
        && CounterY <= left_paddle_loc + PADDLE_RADIUS
        && CounterY >= left_paddle_loc - PADDLE_RADIUS)) begin
@@ -65,15 +66,16 @@ module vga_controller(input wire clk, reset,
          g <= 3'b000;
          b <= 2'b00;
       end
+
       if((CounterX >= RIGHT_PADDLE_BEGIN && CounterX <= RIGHT_PADDLE_BEGIN + PADDLE_THICKNESS
        && CounterY <= right_paddle_loc + PADDLE_RADIUS
        && CounterY >= right_paddle_loc - PADDLE_RADIUS)) begin
-        r <= 3'b110;
-        g <= 3'b011;
-        b <= 2'b10;
+        r <= 3'b111;
+        g <= 3'b111;
+        b <= 2'b11;
        end
   		/*
-  		* Ball and Paddle Creation
+  		* End Ball and Paddle Creation
   		*/
     end
   end
