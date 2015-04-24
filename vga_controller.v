@@ -2,7 +2,7 @@
 * This module controls the color being output to the VGA given the current position of
 * the pointer in the VGA array and the game state.
 * 
-* Inputs: 25 mHz Clock, Reset Signal,
+* Inputs: 25 MHz Clock, Reset Signal,
 *         Counter X and Counter Y from current col/row of VGA pointer,
 *         current data for game state (i.e. position of objects)
 *
@@ -70,9 +70,9 @@ module vga_controller(input wire clk, reset,
       if((CounterX >= RIGHT_PADDLE_BEGIN && CounterX <= RIGHT_PADDLE_BEGIN + PADDLE_THICKNESS
        && CounterY <= right_paddle_loc + PADDLE_RADIUS
        && CounterY >= right_paddle_loc - PADDLE_RADIUS)) begin
-        r <= 3'b111;
+        r <= 3'b010;
         g <= 3'b111;
-        b <= 2'b11;
+        b <= 2'b00;
        end
   		/*
   		* End Ball and Paddle Creation
