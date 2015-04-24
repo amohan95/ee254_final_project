@@ -13,7 +13,7 @@ localparam INITIAL_VELOCITY = 2;
 localparam X_MOVE_COUNTER_INIT = 32;
 localparam Y_MOVE_COUNTER_INIT = 32;
 
-localparam XY_MOVE_COUNTER_MIN = 32;
+localparam XY_MOVE_COUNTER_MIN = 16;
 
 localparam VELOCITY_INCREASE_RATE = 2;
 

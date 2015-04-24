@@ -6,9 +6,7 @@
 module final_project_top(ClkPort, vga_h_sync, vga_v_sync, vga_r, vga_g, vga_b, Sw0, Sw1, btnU, btnD,
 	St_ce_bar, St_rp_bar, Mt_ce_bar, Mt_St_oe_bar, Mt_St_we_bar,
 	An0, An1, An2, An3, Ca, Cb, Cc, Cd, Ce, Cf, Cg, Dp,
-	LD0, LD1, LD2, LD3, LD4, LD5, LD6, LD7, 
-	MISO_A, SS_A, MOSI_A, SCLK_A,
-	MISO_B, SS_B, MOSI_B, SCLK_B);
+	LD0, LD1, LD2, LD3, LD4, LD5, LD6, LD7); 
   `include "constants.vh"
   
   input ClkPort, btnU, btnD, Sw0, Sw1;
@@ -30,7 +28,7 @@ module final_project_top(ClkPort, vga_h_sync, vga_v_sync, vga_r, vga_g, vga_b, S
 	BUF BUF1 (board_clk, ClkPort); 	
 	BUF BUF2 (reset, Sw0);
 	BUF BUF3 (start, Sw1);
-	
+
 	reg [27:0]	DIV_CLK;
 	always @ (posedge board_clk, posedge reset)  
 	begin : CLOCK_DIVIDER
@@ -47,7 +45,7 @@ module final_project_top(ClkPort, vga_h_sync, vga_v_sync, vga_r, vga_g, vga_b, S
   /////////////////////////////////////////////////////////////////
   //////////////      JSTK control starts here    /////////////////
   /////////////////////////////////////////////////////////////////
-	input MISO_A, MISO_B;
+/*	input MISO_A, MISO_B;
   output SS_A, SS_B;          
   output MOSI_A, MOSI_B;       
   output SCLK_A, SCLK_B;       
@@ -63,7 +61,7 @@ module final_project_top(ClkPort, vga_h_sync, vga_v_sync, vga_r, vga_g, vga_b, S
   wire sndRec_A, sndRec_B;
 
   // Data read from PmodJSTK
-  wire [39:0] jstkData_A,jstkData_B;
+  wire [39:0] jstkData_A, jstkData_B;
 
   PmodJSTK PmodJSTK_A(
 			.CLK(clk),
@@ -87,7 +85,7 @@ module final_project_top(ClkPort, vga_h_sync, vga_v_sync, vga_r, vga_g, vga_b, S
 			.SCLK(SCLK_B),
 			.MOSI(MOSI_B),
 			.DOUT(jstkData_B)
-	);
+	);*/
    
 	
   /////////////////////////////////////////////////////////////////
@@ -106,7 +104,7 @@ module final_project_top(ClkPort, vga_h_sync, vga_v_sync, vga_r, vga_g, vga_b, S
   assign game_clk = DIV_CLK[15];
 
   game_controller game_control(.clk(game_clk), .reset(reset), .start(start),
-                               .joystick_left(jstkData_A), .joystick_right(jstkData_B),
+                               .left_up(btnU), .left_down(btnD),
                                .ball_loc_x(ball_loc_x), .ball_loc_y(ball_loc_y),
                                .left_paddle_loc(left_paddle_loc), .right_paddle_loc(right_paddle_loc),
                                .left_score(left_score), .right_score(right_score));

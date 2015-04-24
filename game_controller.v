@@ -1,5 +1,5 @@
 module game_controller(input wire clk, reset, start,
-                       input wire [39:0] joystick_left, joystick_right,
+                       input wire left_up, left_down,
                        output reg [9:0] ball_loc_x, ball_loc_y,
                        output reg [9:0] left_paddle_loc, right_paddle_loc,
                        output reg [3:0] left_score, right_score);
@@ -36,9 +36,6 @@ module game_controller(input wire clk, reset, start,
   
   initial x_move_counter_max <= X_MOVE_COUNTER_INIT;
   initial y_move_counter_max <= Y_MOVE_COUNTER_INIT;
-
-  assign jstk_left = {joystick_left[9:8], joystick_left[23:16]};
-  assign jstk_right = {joystick_right[9:8], joystick_right[23:16]};
 
   always @(posedge clk or posedge reset) begin
     if (reset) begin
@@ -202,13 +199,13 @@ module game_controller(input wire clk, reset, start,
       tmp_counter_max_sum = x_move_counter_max + y_move_counter_max;
       if(tmp_reg >= PADDLE_RADIUS - 14) begin
         dir_y <= 1;
-        x_move_counter_max <= (tmp_counter_max_sum >> 2) + (tmp_counter_max_sum >> 1);
-        y_move_counter_max <= (tmp_counter_max_sum >> 2);
+        x_move_counter_max <= (tmp_counter_max_sum >> 2) + (tmp_counter_max_sum >> 1) - 1;
+        y_move_counter_max <= (tmp_counter_max_sum >> 2) - 1;
       end
       else if(tmp_reg >= PADDLE_RADIUS - 28) begin
         dir_y <= 1;
-        x_move_counter_max <= (tmp_counter_max_sum >> 1);
-        y_move_counter_max <= (tmp_counter_max_sum >> 1);
+        x_move_counter_max <= (tmp_counter_max_sum >> 1) - 1;
+        y_move_counter_max <= (tmp_counter_max_sum >> 1) - 1;
       end
       else if(tmp_reg >= PADDLE_RADIUS - 42) begin
         if(tmp_counter_max_sum - 2 >= XY_MOVE_COUNTER_MIN) begin
@@ -218,33 +215,33 @@ module game_controller(input wire clk, reset, start,
       end
       else if(tmp_reg >= PADDLE_RADIUS - 56) begin
         dir_y <= 0;
-        x_move_counter_max <= (tmp_counter_max_sum >> 1);
-        y_move_counter_max <= (tmp_counter_max_sum >> 1);
+        x_move_counter_max <= (tmp_counter_max_sum >> 1) - 1;
+        y_move_counter_max <= (tmp_counter_max_sum >> 1) - 1;
       end
       else begin
         dir_y <= 0;
-        x_move_counter_max <= (tmp_counter_max_sum >> 2) + (tmp_counter_max_sum >> 1);
-        y_move_counter_max <= (tmp_counter_max_sum >> 2);
+        x_move_counter_max <= (tmp_counter_max_sum >> 2) + (tmp_counter_max_sum >> 1) - 1;
+        y_move_counter_max <= (tmp_counter_max_sum >> 2) - 1;
       end
     end
   endtask
 
   task calculate_joystick_move;
     begin
-      if(jstk_left >= JOYSTICK_UP
+      if(left_up
       && left_paddle_loc - PADDLE_RADIUS - PADDLE_VELOCITY >= FIELD_Y_BEGIN) begin
         left_paddle_loc <= left_paddle_loc - PADDLE_VELOCITY; 
       end
-      else if(jstk_left <= JOYSTICK_DOWN
+      else if(left_down
            && left_paddle_loc + PADDLE_RADIUS + PADDLE_VELOCITY <= FIELD_Y_END) begin
         left_paddle_loc <= left_paddle_loc + PADDLE_VELOCITY;
       end
 
-      if(jstk_right >= JOYSTICK_UP
+      if(ball_loc_y < right_paddle_loc
       && right_paddle_loc - PADDLE_RADIUS - PADDLE_VELOCITY >= FIELD_Y_BEGIN) begin
         right_paddle_loc <= right_paddle_loc - PADDLE_VELOCITY; 
       end
-      else if(jstk_right <= JOYSTICK_DOWN
+      else if(ball_loc_y > right_paddle_loc
            && right_paddle_loc + PADDLE_RADIUS + PADDLE_VELOCITY <= FIELD_Y_END) begin
         right_paddle_loc <= right_paddle_loc + PADDLE_VELOCITY;
       end
