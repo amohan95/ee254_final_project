@@ -1,4 +1,5 @@
 module game_controller(input wire clk, reset, start,
+                       input wire [39:0] joystick_left, joystick_right,
                        output reg [9:0] ball_loc_x, ball_loc_y,
                        output reg [9:0] left_paddle_loc, right_paddle_loc,
                        output reg [3:0] left_score, right_score);
@@ -63,7 +64,7 @@ module game_controller(input wire clk, reset, start,
             paddle_move_counter <= paddle_move_counter + 1;
 
             if(paddle_move_counter == PADDLE_MOVE_COUNTER_MAX) begin
-              // TODO: Use input from joystick to move paddles
+              calculate_joystick_move();
               check_x <= 1;
             end
             if(x_move_counter == x_move_counter_max) begin
@@ -219,6 +220,28 @@ module game_controller(input wire clk, reset, start,
         dir_y <= 1;
         x_move_counter_max <= (tmp_counter_max_sum >> 2) + (tmp_counter_max_sum >> 1);
         y_move_counter_max <= (tmp_counter_max_sum >> 2);
+      end
+    end
+  endtask
+
+  task calculate_joystick_move;
+    begin
+      if(joystick_left >= JOYSTICK_UP
+      && left_paddle_loc - PADDLE_RADIUS - PADDLE_VELOCITY >= FIELD_Y_BEGIN) begin
+        left_paddle_loc <= left_paddle_loc - PADDLE_VELOCITY; 
+      end
+      else if(joystick_left <= JOYSTICK_DOWN
+           && left_paddle_loc + PADDLE_RADIUS + PADDLE_VELOCITY <= FIELD_Y_END) begin
+        left_paddle_loc <= left_paddle_loc + PADDLE_VELOCITY;
+      end
+
+      if(joystick_right >= JOYSTICK_UP
+      && right_paddle_loc - PADDLE_RADIUS - PADDLE_VELOCITY >= FIELD_Y_BEGIN) begin
+        right_paddle_loc <= right_paddle_loc - PADDLE_VELOCITY; 
+      end
+      else if(joystick_right <= JOYSTICK_DOWN
+           && right_paddle_loc + PADDLE_RADIUS + PADDLE_VELOCITY <= FIELD_Y_END) begin
+        right_paddle_loc <= right_paddle_loc + PADDLE_VELOCITY;
       end
     end
   endtask

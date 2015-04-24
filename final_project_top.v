@@ -7,7 +7,7 @@ module final_project_top(ClkPort, vga_h_sync, vga_v_sync, vga_r, vga_g, vga_b, S
 	St_ce_bar, St_rp_bar, Mt_ce_bar, Mt_St_oe_bar, Mt_St_we_bar,
 	An0, An1, An2, An3, Ca, Cb, Cc, Cd, Ce, Cf, Cg, Dp,
 	LD0, LD1, LD2, LD3, LD4, LD5, LD6, LD7, 
-	MISO_A, SS_A, MOSI_A, SCLK_A
+	MISO_A, SS_A, MOSI_A, SCLK_A,
 	MISO_B, SS_B, MOSI_B, SCLK_B);
   `include "constants.vh"
   
@@ -76,6 +76,7 @@ module final_project_top(ClkPort, vga_h_sync, vga_v_sync, vga_r, vga_g, vga_b, S
 			.MOSI(MOSI_A),
 			.DOUT(jstkData_A)
 	);
+
 	PmodJSTK PmodJSTK_B(
 			.CLK(clk),
 			.RST(reset),
@@ -105,6 +106,7 @@ module final_project_top(ClkPort, vga_h_sync, vga_v_sync, vga_r, vga_g, vga_b, S
   assign game_clk = DIV_CLK[17];
 
   game_controller game_control(.clk(game_clk), .reset(reset),
+                               .joystick_left(jstkData_A), .joystick_right(jstkData_B),
                                .ball_loc_x(ball_loc_x), .ball_loc_y(ball_loc_y),
                                .left_paddle_loc(left_paddle_loc), .right_paddle_loc(right_paddle_loc),
                                .left_score(left_score), .right_score(right_score));
