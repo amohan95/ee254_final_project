@@ -49,6 +49,7 @@ module vga_controller(input wire clk, reset,
       /*
       * End Field Frame Creation
       */
+      
   		/*
   		* Ball and Paddle Creation
   		*/

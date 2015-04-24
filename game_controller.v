@@ -56,7 +56,6 @@ module game_controller(input wire clk, reset, start,
             if(start) begin
               state <= QGAME_MOVE;
             end
-				    state <= QGAME_MOVE;
           end
           QGAME_MOVE: begin
             x_move_counter <= x_move_counter + 1;
@@ -105,7 +104,10 @@ module game_controller(input wire clk, reset, start,
             end
           end
           QGAME_END: begin
-            state <= QI; // TODO: Fill this in with ACK signal or something + showing winner
+            if(~start) begin
+              state <= QI;
+            end
+            // TODO: Fill this in with ACK signal or something + showing winner
           end
         endcase
 		  end
@@ -196,12 +198,12 @@ module game_controller(input wire clk, reset, start,
     begin
       tmp_counter_max_sum = x_move_counter_max + y_move_counter_max;
       if(tmp_reg >= PADDLE_RADIUS - 14) begin
-        dir_y <= 0;
+        dir_y <= 1;
         x_move_counter_max <= (tmp_counter_max_sum >> 2) + (tmp_counter_max_sum >> 1);
         y_move_counter_max <= (tmp_counter_max_sum >> 2);
       end
       else if(tmp_reg >= PADDLE_RADIUS - 28) begin
-        dir_y <= 0;
+        dir_y <= 1;
         x_move_counter_max <= (tmp_counter_max_sum >> 1);
         y_move_counter_max <= (tmp_counter_max_sum >> 1);
       end
@@ -212,12 +214,12 @@ module game_controller(input wire clk, reset, start,
         end
       end
       else if(tmp_reg >= PADDLE_RADIUS - 56) begin
-        dir_y <= 1;
+        dir_y <= 0;
         x_move_counter_max <= (tmp_counter_max_sum >> 1);
         y_move_counter_max <= (tmp_counter_max_sum >> 1);
       end
       else begin
-        dir_y <= 1;
+        dir_y <= 0;
         x_move_counter_max <= (tmp_counter_max_sum >> 2) + (tmp_counter_max_sum >> 1);
         y_move_counter_max <= (tmp_counter_max_sum >> 2);
       end

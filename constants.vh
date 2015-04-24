@@ -5,15 +5,15 @@ localparam PADDLE_RADIUS = 35;
 localparam PADDLE_THICKNESS = 6;
 localparam BALL_RADIUS = 6;
 
-localparam PADDLE_MOVE_COUNTER_MAX = 10;
-localparam PADDLE_VELOCITY = 1;
+localparam PADDLE_MOVE_COUNTER_MAX = 15;
+localparam PADDLE_VELOCITY = 2;
 
 localparam INITIAL_VELOCITY = 2;
 
-localparam X_MOVE_COUNTER_INIT = 15;
-localparam Y_MOVE_COUNTER_INIT = 15;
+localparam X_MOVE_COUNTER_INIT = 32;
+localparam Y_MOVE_COUNTER_INIT = 32;
 
-localparam XY_MOVE_COUNTER_MIN = 10;
+localparam XY_MOVE_COUNTER_MIN = 32;
 
 localparam VELOCITY_INCREASE_RATE = 2;
 

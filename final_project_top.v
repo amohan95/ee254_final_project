@@ -11,7 +11,7 @@ module final_project_top(ClkPort, vga_h_sync, vga_v_sync, vga_r, vga_g, vga_b, S
 	MISO_B, SS_B, MOSI_B, SCLK_B);
   `include "constants.vh"
   
-  input ClkPort, Sw0, btnU, btnD, Sw0, Sw1;
+  input ClkPort, btnU, btnD, Sw0, Sw1;
   output St_ce_bar, St_rp_bar, Mt_ce_bar, Mt_St_oe_bar, Mt_St_we_bar;
   output vga_h_sync, vga_v_sync, vga_r, vga_g, vga_b;
   output An0, An1, An2, An3, Ca, Cb, Cc, Cd, Ce, Cf, Cg, Dp;
@@ -103,9 +103,9 @@ module final_project_top(ClkPort, vga_h_sync, vga_v_sync, vga_r, vga_g, vga_b, S
   wire [9:0] left_paddle_loc, right_paddle_loc;
   wire [3:0] left_score, right_score;
 
-  assign game_clk = DIV_CLK[17];
+  assign game_clk = DIV_CLK[15];
 
-  game_controller game_control(.clk(game_clk), .reset(reset),
+  game_controller game_control(.clk(game_clk), .reset(reset), .start(start),
                                .joystick_left(jstkData_A), .joystick_right(jstkData_B),
                                .ball_loc_x(ball_loc_x), .ball_loc_y(ball_loc_y),
                                .left_paddle_loc(left_paddle_loc), .right_paddle_loc(right_paddle_loc),
