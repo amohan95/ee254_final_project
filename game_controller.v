@@ -15,11 +15,11 @@ module game_controller(input wire clk, reset, start,
   reg check_x;
   reg check_y;
 
-  reg [4:0] x_move_counter;
-  reg [4:0] y_move_counter;
-  reg [4:0] x_move_counter_max;
-  reg [4:0] y_move_counter_max;
-  reg [10:0] tmp_counter_max_sum;
+  reg [10:0] x_move_counter;
+  reg [10:0] y_move_counter;
+  reg [10:0] x_move_counter_max;
+  reg [10:0] y_move_counter_max;
+  reg [20:0] tmp_counter_max_sum;
 
   reg signed [10:0] tmp_reg;
   reg win_flag; // 0 = left player is winner, 1 = right player is winner
@@ -36,6 +36,9 @@ module game_controller(input wire clk, reset, start,
   
   initial x_move_counter_max <= X_MOVE_COUNTER_INIT;
   initial y_move_counter_max <= Y_MOVE_COUNTER_INIT;
+
+  assign jstk_left = {joystick_left[9:8], joystick_left[23:16]};
+  assign jstk_right = {joystick_right[9:8], joystick_right[23:16]};
 
   always @(posedge clk or posedge reset) begin
     if (reset) begin
@@ -228,20 +231,20 @@ module game_controller(input wire clk, reset, start,
 
   task calculate_joystick_move;
     begin
-      if(joystick_left >= JOYSTICK_UP
+      if(jstk_left >= JOYSTICK_UP
       && left_paddle_loc - PADDLE_RADIUS - PADDLE_VELOCITY >= FIELD_Y_BEGIN) begin
         left_paddle_loc <= left_paddle_loc - PADDLE_VELOCITY; 
       end
-      else if(joystick_left <= JOYSTICK_DOWN
+      else if(jstk_left <= JOYSTICK_DOWN
            && left_paddle_loc + PADDLE_RADIUS + PADDLE_VELOCITY <= FIELD_Y_END) begin
         left_paddle_loc <= left_paddle_loc + PADDLE_VELOCITY;
       end
 
-      if(joystick_right >= JOYSTICK_UP
+      if(jstk_right >= JOYSTICK_UP
       && right_paddle_loc - PADDLE_RADIUS - PADDLE_VELOCITY >= FIELD_Y_BEGIN) begin
         right_paddle_loc <= right_paddle_loc - PADDLE_VELOCITY; 
       end
-      else if(joystick_right <= JOYSTICK_DOWN
+      else if(jstk_right <= JOYSTICK_DOWN
            && right_paddle_loc + PADDLE_RADIUS + PADDLE_VELOCITY <= FIELD_Y_END) begin
         right_paddle_loc <= right_paddle_loc + PADDLE_VELOCITY;
       end
