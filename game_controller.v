@@ -208,7 +208,7 @@ module game_controller(input wire clk, reset, start,
         if(tmp_counter_max_sum - 2 >= XY_MOVE_COUNTER_MIN) begin
           x_move_counter_max <= x_move_counter_max - 1;
           y_move_counter_max <= y_move_counter_max - 1;
-        end 
+        end
       end
       else if(tmp_reg >= PADDLE_RADIUS - 56) begin
         dir_y <= 1;
