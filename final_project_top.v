@@ -6,7 +6,9 @@
 module final_project_top(ClkPort, vga_h_sync, vga_v_sync, vga_r, vga_g, vga_b, Sw0, Sw1, btnU, btnD,
 	St_ce_bar, St_rp_bar, Mt_ce_bar, Mt_St_oe_bar, Mt_St_we_bar,
 	An0, An1, An2, An3, Ca, Cb, Cc, Cd, Ce, Cf, Cg, Dp,
-	LD0, LD1, LD2, LD3, LD4, LD5, LD6, LD7);
+	LD0, LD1, LD2, LD3, LD4, LD5, LD6, LD7, 
+	MISO_A, SS_A, MOSI_A, SCLK_A
+	MISO_B, SS_B, MOSI_B, SCLK_B);
   `include "constants.vh"
   
   input ClkPort, Sw0, btnU, btnD, Sw0, Sw1;
@@ -42,9 +44,57 @@ module final_project_top(ClkPort, vga_h_sync, vga_v_sync, vga_r, vga_g, vga_b, S
 	assign	clk = DIV_CLK[1];
 	assign 	{St_ce_bar, St_rp_bar, Mt_ce_bar, Mt_St_oe_bar, Mt_St_we_bar} = {5'b11111};
   
+  /////////////////////////////////////////////////////////////////
+  //////////////      JSTK control starts here    /////////////////
+  /////////////////////////////////////////////////////////////////
+	input MISO_A, MISO_B;
+  output SS_A, SS_B;          
+  output MOSI_A, MOSI_B;       
+  output SCLK_A, SCLK_B;       
+
+  wire SS_A, SS_B;           
+  wire MOSI_A, MOSI_B;          
+  wire SCLK_A, SCLK_B;          
+
+  // Holds data to be sent to PmodJSTK
+  wire [7:0] sndData_A, sndData_B;
+
+  // Signal to send/receive data to/from PmodJSTK
+  wire sndRec_A, sndRec_B;
+
+  // Data read from PmodJSTK
+  wire [39:0] jstkData_A,jstkData_B;
+
+  PmodJSTK PmodJSTK_A(
+			.CLK(clk),
+			.RST(reset),
+			.sndRec(sndRec_A),
+			.DIN(sndData_A),
+			.MISO(MISO_A),
+			.SS(SS_A),
+			.SCLK(SCLK_A),
+			.MOSI(MOSI_A),
+			.DOUT(jstkData_A)
+	);
+	PmodJSTK PmodJSTK_B(
+			.CLK(clk),
+			.RST(reset),
+			.sndRec(sndRec_B),
+			.DIN(sndData_B),
+			.MISO(MISO_B),
+			.SS(SS_B),
+			.SCLK(SCLK_B),
+			.MOSI(MOSI_B),
+			.DOUT(jstkData_B)
+	);
+   
+	
+  /////////////////////////////////////////////////////////////////
+  //////////////      JSTK control ends here    ///////////////////
+  /////////////////////////////////////////////////////////////////
   
   /////////////////////////////////////////////////////////////////
-  //////////////      Game control ends here    ///////////////////
+  //////////////      Game control starts here    ///////////////////
   /////////////////////////////////////////////////////////////////
   
   wire game_clk;
@@ -64,6 +114,7 @@ module final_project_top(ClkPort, vga_h_sync, vga_v_sync, vga_r, vga_g, vga_b, S
   //////////////      Game control ends here    ///////////////////
   /////////////////////////////////////////////////////////////////
   
+
 
   /////////////////////////////////////////////////////////////////
   ///////////////   VGA control starts here   /////////////////
